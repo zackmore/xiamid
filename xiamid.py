@@ -37,10 +37,6 @@ class SingleDownload(object):
         return self.encoded_url
 
     def decode_url(self):
-        if len(self.encoded_url) != 87:
-            print 'Invalid encoded URL.'
-            return False
-
         def URL_matrix(URL):
             rows = int(URL[0])
             mess_text = URL[1:]
@@ -55,7 +51,13 @@ class SingleDownload(object):
                 big_rows = len(mess_text) % rows
                 big_cols = cols + 1
             for r in range(rows):
-                if big_rows is not None:
+                try:
+                    big_rows
+                except NameError:
+                    for c in range(cols):
+                        matrix[r].append(mess_text[text_index])
+                        text_index += 1
+                else:
                     if r < big_rows:
                         for c in range(big_cols):
                             matrix[r].append(mess_text[text_index])
@@ -64,10 +66,6 @@ class SingleDownload(object):
                         for c in range(cols):
                             matrix[r].append(mess_text[text_index])
                             text_index += 1
-                else:
-                    for c in range(cols):
-                        matrix[r].append(mess_text[text_index])
-                        text_index += 1
             return matrix
 
         def matrix_to_url(matrix):
