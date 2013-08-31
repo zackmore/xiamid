@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 #
 # TODO:
-# 1.Get single file info and save as filename.
+# 1.Add mp3 ID3 tag.
 # 2.Album download.
 # 3.Artist download.
+# 4.Multi download.
 
 import pdb
 
@@ -101,8 +102,8 @@ class SingleDownload(object):
         self.get_xml()
         self.decode_url()
 
-        local_filename = self.info['title'] + ' - ' +\
-                        self.info['album'] + ' - ' +\
+        local_filename = self.info['title'] + '_' +\
+                        self.info['album'] + '_' +\
                         self.info['artist'] + '.' +\
                         self.url.split('.')[-1]
         r = requests.get(self.url, stream = True)
