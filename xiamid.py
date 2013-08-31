@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # TODO:
 # 1.Get single file info and save as filename.
@@ -21,6 +21,7 @@ class SingleDownload(object):
         self.xml_url = URL_single_prefix + str(sid)
         self.encoded_url = ''
         self.url = ''
+        self.info = {}
 
     def get_xml(self):
         request_headers = {'User-Agent': 'Wget/1.12'}
@@ -34,6 +35,11 @@ class SingleDownload(object):
         soup = BeautifulSoup.BeautifulSoup(xml_file)
         encoded_url_el = soup.find('location')
         self.encoded_url = encoded_url_el.text
+
+        self.info['title'] = soup.find('title').text
+        self.info['album'] = soup.find('album_name').text
+        self.info['artist'] = soup.find('artist').text
+
         return self.encoded_url
 
     def decode_url(self):
@@ -95,7 +101,10 @@ class SingleDownload(object):
         self.get_xml()
         self.decode_url()
 
-        local_filename = self.url.split('/')[-1]
+        local_filename = self.info['title'] + ' - ' +\
+                        self.info['album'] + ' - ' +\
+                        self.info['artist'] + '.' +\
+                        self.url.split('.')[-1]
         r = requests.get(self.url, stream = True)
         with open(local_filename, 'wb') as f:
             for chunk in r.iter_content(chunk_size=1024):
