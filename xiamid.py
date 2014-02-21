@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# TODO:
+# todo:
 # 1.Add mp3 ID3 tag.
 # 2.Album download.[done]
 #   2.1 Album save as a folder
@@ -16,7 +16,6 @@ import argparse
 import urllib
 
 URL_single_prefix = 'http://www.xiami.com/song/playlist/id/'
-
 URL_album_prefix = 'http://www.xiami.com/song/playlist/id/'
 URL_album_appendix = '/type/1'
 
@@ -49,7 +48,7 @@ class SingleDownload(object):
         return self.encoded_url
 
     def decode_url(self):
-        def URL_matrix(URL):
+        def _URL_matrix(URL):
             rows = int(URL[0])
             mess_text = URL[1:]
             text_index = 0
@@ -80,7 +79,7 @@ class SingleDownload(object):
                             text_index += 1
             return matrix
 
-        def matrix_to_url(matrix):
+        def _matrix_to_url(matrix):
             if type(matrix[0]) != type([]):
                 print 'Invalid 2D matrix.'
                 return False
@@ -99,18 +98,18 @@ class SingleDownload(object):
             url = urllib.unquote(url)
             return url.replace('^', '0')
 
-        matrix = URL_matrix(self.encoded_url)
-        self.url = matrix_to_url(matrix)
-        return self.url
+        matrix = _URL_matrix(self.encoded_url)
+        self.url = _matrix_to_url(matrix).split('?')[0]
 
     def download_file(self):
         self.get_xml()
         self.decode_url()
 
-        local_filename = self.info['title'] + '_' +\
-                        self.info['album'] + '_' +\
-                        self.info['artist'] + '.' +\
+        local_filename = self.info['title'] + '[' +\
+                        self.info['album'] + '](' +\
+                        self.info['artist'] + ').' +\
                         self.url.split('.')[-1]
+        local_filename = local_filename.replace('/', ' ')
         r = requests.get(self.url, stream = True)
         print(local_filename + ' downding...')
         with open(local_filename, 'wb') as f:
@@ -160,6 +159,6 @@ if __name__ == '__main__':
     #d = SingleDownload(args.sid)
     #d.download_file()
 
-    d = AlbumDownload(args.aid)
-    d.download_file()
+    #d = AlbumDownload(args.aid)
+    #d.download_file()
 
